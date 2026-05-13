@@ -63,7 +63,7 @@ extractBtn.addEventListener('click', async () => {
   formData.append('file', selectedFile);
 
   try {
-    const response = await fetch('http://127.0.0.1:8000/extract', {
+    const response = await fetch('https://malankabuilder-docuagent.hf.space/extract', {
       method: 'POST',
       body: formData
     });
@@ -195,7 +195,7 @@ document.getElementById('exportExcel').addEventListener('click', () => {
 });
 
 document.getElementById('exportPdf').addEventListener('click', async () => {
-  const response = await fetch('http://127.0.0.1:8000/export/pdf');
+  const response = await fetch('https://malankabuilder-docuagent.hf.space/export/pdf');
   const blob = await response.blob();
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
