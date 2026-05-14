@@ -51,33 +51,26 @@ async def extract_document(file: UploadFile = File(...)):
     else:
         return {"error": "Unsupported file type. Use PDF, PNG, or JPG."}
 
-    response = client.models.generate_content(
-        model="gemini-2.5-flash-lite",
-        contents=[
+response = client.chat.completions.create(
+        model="meta-llama/llama-4-scout-17b-16e-instruct",
+        messages=[
             {
-                "parts": [
+                "role": "user",
+                "content": [
                     {
-                        "inline_data": {
-                            "mime_type": mime_type,
-                            "data": contents
-                        }
+                        "type": "text",
+                        "text": "You are a document analysis expert. Analyze this document image and extract information in this exact JSON format:\n{\n    \"document_type\": \"invoice/report/form/letter/research_paper/presentation/other\",\n    \"summary\": \"A concise 2-3 sentence summary of what this document contains and its purpose.\",\n    \"key_fields\": {},\n    \"anomalies\": [],\n    \"confidence\": \"high/medium/low\"\n}\nReturn only valid JSON. No markdown, no explanation."
                     },
                     {
-                        "text": """Analyze this document and extract the following in JSON format:
-                        {
-                            "document_type": "invoice/report/form/letter/other",
-                            "summary": "brief summary of the document",
-                            "key_fields": {
-                                "extracted key-value pairs relevant to document type"
-                            },
-                            "anomalies": ["any unusual or missing fields"],
-                            "confidence": "high/medium/low"
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:{mime_type};base64,{image_data}"
                         }
-                        Return only valid JSON, nothing else."""
                     }
                 ]
             }
-        ]
+        ],
+        max_tokens=1000
     )
 
     try:
